@@ -298,19 +298,6 @@ router.get('/bulk', async (req, res) => {
 })
 
 const forgetSchema = z.object({
-    // username: z.union([
-    //     z.string().trim()
-    //         .regex(/[^""]/, { message: "Username or E-mail is required" })
-    //         .min(3, { message: "Usename must be at least 3 characters long" })
-    //         .max(20, { message: "Usename must be less than 20 characters long" })
-    //         .regex(/^[a-z0-9_]+$/, { message: "Username can only contain lowercase, numbers, and underscores." }),
-    //     z.string().trim()
-    //         .regex(/[^""]/, { message: "Username or E-mail is required" })
-    //         .email({ message: "Invalid email format." }).toLowerCase(),
-    // ], {
-    //     // Agar dono mein se kuch bhi match nahi hua, toh yeh main message aayega
-    //     errorMap: () => ({ message: "Please enter a valid Username or Email." })
-    // }),
     username: z.string().trim()
         .regex(/[^""]/, { message: "Username or E-mail is required" }).superRefine((val, ctx) => {
             // 1. Agar input mein '@' hai -> Strict EMAIL Validation
@@ -348,7 +335,13 @@ const forgetSchema = z.object({
             }
         }),
     oldPassword: z.string().trim()
-        .regex(/[^""]/, { message: "Old Password is required" }),
+        .regex(/[^""]/, { message: "Old Password is required" })
+        .min(8, { message: "Password must be at least 8 characters long" })
+        .max(20, { message: "Password must be less than 20 characters long" })
+        .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+        .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+        .regex(/[0-9]/, { message: "Password must contain at least one number" })
+        .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" }),
     newPassword: z.string().trim()
         .regex(/[^""]/, { message: "New Password is required" })
         .min(8, { message: "Password must be at least 8 characters long" })
