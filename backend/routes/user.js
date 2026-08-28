@@ -8,48 +8,65 @@ const router = express.Router()
 
 // Step.1 - Define Zod Security
 const signupSchema = z.object({
-    email: z.string().trim().superRefine((val, ctx) => {
-        // 1. Agar input mein '@' hai -> Strict EMAIL Validation
-        if (val.includes('@')) {
-            const isEmail = z.string().email().safeParse(val);
-            if (!isEmail.success) {
+    username: z.string().trim()
+        .regex(/[^""]/, { message: "Username is required" }).superRefine((val, ctx) => {
+            if (val.length < 3) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: "Invalid email format (e.g., example@gmail.com).",
+                    message: "Username must be at least 3 characters long.",
                 });
             }
-        }
-    }),
-    username: z.string().trim().superRefine((val, ctx) => {
-        if (val.length < 3) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "Username must be at least 3 characters long.",
-            });
-        }
-        else if (val.length > 20) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "Username must be less than 20 characters long.",
-            });
-        }
-        // Regex: Username mein sirf alphabets, numbers, aur underscores (_) allowed hain
-        else if (!/^[a-z0-9_]+$/.test(val)) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "Username can only contain lowercase, numbers, and underscores.",
-            });
-        }
-    }),
-    password: z.string({ required_error: "Password is required" }).trim()
+            else if (val.length > 20) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Username must be less than 20 characters long.",
+                });
+            }
+            // Regex: Username mein sirf alphabets, numbers, aur underscores (_) allowed hain
+            else if (!/^[a-z0-9_]+$/.test(val)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Username can only contain lowercase, numbers, and underscores.",
+                });
+            }
+        }),
+    firstname: z.string().max(30, { message: "Firstname must be less than 30 characters long" })
+        .regex(/[^""]/, { message: "Firstname is required" })
+        .regex(/[A-Z]/, { message: "Firstname must contain at least one uppercase letter" }),
+    lastname: z.string().max(30, { message: "Lastname must be less than 30 characters long" })
+        .regex(/[^""]/, { message: "Lastname is required" })
+        .regex(/[A-Z]/, { message: "Lastname must contain at least one uppercase letter" }),
+    email: z.string().trim()
+        .regex(/[^""]/, { message: "E-mail is required" }).superRefine((val, ctx) => {
+            // 1. Agar input mein '@' hai -> Strict EMAIL Validation
+            if (val.includes('@')) {
+                const isEmail = z.string().email().toLowerCase().safeParse(val);
+                if (!isEmail.success) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Invalid email format (e.g., example@gmail.com).",
+                    });
+                }
+            }
+            // 2. Agar '@' nahi hai -> Strict USERNAME Validation
+            else {
+                // Regex: Username mein sirf alphabets, numbers, aur plus (+) allowed hain
+                if (/[^@+0-9]/.test(val)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Invalid email format (e.g., example@gmail.com).",
+                    });
+                }
+            }
+        }),
+    password: z.string().trim()
+        .regex(/[^""]/, { message: "Password is required" })
         .min(8, { message: "Password must be at least 8 characters long" })
         .max(20, { message: "Password must be less than 20 characters long" })
         .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
         .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
         .regex(/[0-9]/, { message: "Password must contain at least one number" })
         .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" }),
-    firstname: z.string().max(30, { message: "Firstname must be less than 30 characters long" }),
-    lastname: z.string().max(30, { message: "Lastname must be less than 30 characters long" }),
 })
 
 // Step.2 - Define body Structure for Post '/signup' Route
@@ -111,44 +128,45 @@ router.post('/signup', async (req, res) => {
 
 
 const signinSchema = z.object({
-    username: z.string().trim().superRefine((val, ctx) => {
-        // 1. Agar input mein '@' hai -> Strict EMAIL Validation
-        if (val.includes('@')) {
-            const isEmail = z.string().email().safeParse(val);
-            if (!isEmail.success) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: "Invalid email format (e.g., example@gmail.com).",
-                });
-            }
-        }
-        // 2. Agar '@' nahi hai -> Strict USERNAME Validation
-        else {
-            if (val.length < 3) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: "Username must be at least 3 characters long.",
-                });
-            }
-            else if (val.length > 20) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: "Username must be less than 20 characters long.",
-                });
-            }
-            // Regex: Username mein sirf alphabets, numbers, aur underscores (_) allowed hain
-            else if (!/^[a-z0-9_]+$/.test(val)) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: "Username can only contain lowercase, numbers, and underscores.",
-                });
-            }
-        }
-    }),
+    username: z.string().trim()
+        .regex(/[^""]/, { message: "Username or E-mail is required" }).superRefine((val, ctx) => {
+            // 1. Agar input mein '@' hai -> Strict EMAIL Validation
+            if (val.includes('@')) {
+                const isEmail = z.string().email().safeParse(val);
+                if (!isEmail.success) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Invalid email format (e.g., example@gmail.com).",
+                    });
+                }
 
-    password: z.string({
-        required_error: "Username or E-mail is required",
-    }).trim().min(8, { message: "Password must be at least 8 characters long" })
+            }
+            // 2. Agar '@' nahi hai -> Strict USERNAME Validation
+            else {
+                if (val.length < 3) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Username must be at least 3 characters long.",
+                    });
+                }
+                else if (val.length > 20) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Username must be less than 20 characters long.",
+                    });
+                }
+                // Regex: Username mein sirf alphabets, numbers, aur underscores (_) allowed hain
+                else if (!/^[a-z0-9_]+$/.test(val)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Username can only contain lowercase, numbers, and underscores.",
+                    });
+                }
+            }
+        }),
+    password: z.string().trim()
+        .regex(/[^""]/, { message: "Password is required" })
+        .min(8, { message: "Password must be at least 8 characters long" })
         .max(20, { message: "Password must be less than 20 characters long" })
         .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
         .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
@@ -197,18 +215,42 @@ router.post('/signin', async (req, res) => {
 })
 
 const updateBody = z.object({
-    email: z.string({ required_error: "Email is required" }).trim()
-        .email({ message: "Please enter a valid email address (e.g., name@gmail.com)." })
-        .toLowerCase(),
-    password: z.string({ required_error: "E-mail is required" }).trim()
+    firstname: z.string().max(30, { message: "Firstname must be less than 30 characters long" })
+        .regex(/[^""]/, { message: "Firstname is required" })
+        .regex(/[A-Z]/, { message: "Firstname must contain at least one uppercase letter" }),
+    lastname: z.string().max(30, { message: "Lastname must be less than 30 characters long" })
+        .regex(/[^""]/, { message: "Lastname is required" })
+        .regex(/[A-Z]/, { message: "Lastname must contain at least one uppercase letter" }),
+    email: z.string().trim()
+        .regex(/[^""]/, { message: "E-mail is required" }).superRefine((val, ctx) => {
+            // 1. Agar input mein '@' hai -> Strict EMAIL Validation
+            if (val.includes('@')) {
+                const isEmail = z.string().email().toLowerCase().safeParse(val);
+                if (!isEmail.success) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Please ! Enter a valid e-mail (e.g., example@gmail.com).",
+                    });
+                }
+            }
+            // 2. Agar '@' nahi hai -> Strict USERNAME Validation
+            else {
+                if (/[^@+0-9]/.test(val)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Please ! Enter a valid e-mail (e.g., example@gmail.com).",
+                    });
+                }
+            }
+        }),
+    password: z.string().trim()
+        .regex(/[^""]/, { message: "Password is required" })
         .min(8, { message: "Password must be at least 8 characters long" })
         .max(20, { message: "Password must be less than 20 characters long" })
         .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
         .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
         .regex(/[0-9]/, { message: "Password must contain at least one number" })
         .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" }),
-    firstname: z.string().max(30, { message: "Firstname must be less than 30 characters long" }),
-    lastname: z.string().max(30, { message: "Lastname must be less than 30 characters long" }),
 })
 
 router.post('/update', authMiddleware, async (req, res) => {
@@ -256,56 +298,81 @@ router.get('/bulk', async (req, res) => {
 })
 
 const forgetSchema = z.object({
-    params: z.object({
-        username: z.union([
-            z.string({
-                required_error: "Username or E-mail is required",
-            }).min(3, { message: "Usename must be at least 3 characters long" }).trim()
-                .max(20, { message: "Usename must be less than 20 characters long" })
-                .regex(/^[a-z0-9_]+$/, { message: "Username can only contain lowercase, numbers, and underscores." }),
-            z.string({
-                required_error: "Username or E-mail is required",
-            }).trim().email({ message: "Invalid email format." }).toLowerCase(),
-        ], {
-            // Agar dono mein se kuch bhi match nahi hua, toh yeh main message aayega
-            errorMap: () => ({ message: "Please enter a valid Username or Email." })
-        })
-    }),
-    body: z.object({
-        oldPassword: z.string({
-            required_error: "Last password is required",       // Agar field khali chhod di
-            invalid_type_error: "Invalid password please fill the correct password" // Agar number bhej diya
+    // username: z.union([
+    //     z.string().trim()
+    //         .regex(/[^""]/, { message: "Username or E-mail is required" })
+    //         .min(3, { message: "Usename must be at least 3 characters long" })
+    //         .max(20, { message: "Usename must be less than 20 characters long" })
+    //         .regex(/^[a-z0-9_]+$/, { message: "Username can only contain lowercase, numbers, and underscores." }),
+    //     z.string().trim()
+    //         .regex(/[^""]/, { message: "Username or E-mail is required" })
+    //         .email({ message: "Invalid email format." }).toLowerCase(),
+    // ], {
+    //     // Agar dono mein se kuch bhi match nahi hua, toh yeh main message aayega
+    //     errorMap: () => ({ message: "Please enter a valid Username or Email." })
+    // }),
+    username: z.string().trim()
+        .regex(/[^""]/, { message: "Username or E-mail is required" }).superRefine((val, ctx) => {
+            // 1. Agar input mein '@' hai -> Strict EMAIL Validation
+            if (val.includes('@')) {
+                const isEmail = z.string().email().safeParse(val);
+                if (!isEmail.success) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Invalid email format (e.g., example@gmail.com).",
+                    });
+                }
+
+            }
+            // 2. Agar '@' nahi hai -> Strict USERNAME Validation
+            else {
+                if (val.length < 3) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Username must be at least 3 characters long.",
+                    });
+                }
+                else if (val.length > 20) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Username must be less than 20 characters long.",
+                    });
+                }
+                // Regex: Username mein sirf alphabets, numbers, aur underscores (_) allowed hain
+                else if (!/^[a-z0-9_]+$/.test(val)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Username can only contain lowercase, numbers, and underscores.",
+                    });
+                }
+            }
         }),
-        newPassword: z.string({
-            required_error: "New password must be diffrent",       // Agar field khali chhod di
-            invalid_type_error: "Invalid password please fill the correct password" // Agar number bhej diya
-        }).trim().min(8, { message: "Password must be at least 8 characters long" })
-            .max(20, { message: "Password must be less than 20 characters long" })
-            .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
-            .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
-            .regex(/[0-9]/, { message: "Password must contain at least one number" })
-            .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" })
-    })
+    oldPassword: z.string().trim()
+        .regex(/[^""]/, { message: "Old Password is required" }),
+    newPassword: z.string().trim()
+        .regex(/[^""]/, { message: "New Password is required" })
+        .min(8, { message: "Password must be at least 8 characters long" })
+        .max(20, { message: "Password must be less than 20 characters long" })
+        .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+        .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+        .regex(/[0-9]/, { message: "Password must contain at least one number" })
+        .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" })
+
 })
 
 router.put('/forget/:username', async (req, res) => {
-    const validation = forgetSchema.safeParse({
-        params: req.params,
-        body: req.body
-    })
-    if (!validation.success) {
+    const body = req.body;
+    const { success, error } = forgetSchema.safeParse(req.body)
+    if (!success) {
         return res.status(400).json({
             message: "Invalid inputs",
-            errors: validation.error.flatten().fieldErrors
+            errors: error.flatten().fieldErrors
         });
     }
-    const { username } = validation.data.params;
-    const { oldPassword, newPassword } = validation.data.body;
-
     const existingUser = await User.findOne({
         $or: [
-            { username: username }, // Agar username se match ho jaye
-            { email: username }     // Ya phir email se match ho jaye
+            { username: body.username }, // Agar username se match ho jaye
+            { email: body.username }     // Ya phir email se match ho jaye
         ]
     })
     if (!existingUser) {
@@ -314,7 +381,7 @@ router.put('/forget/:username', async (req, res) => {
         })
     }
 
-    const isPasswordMatch = await bcrypt.compare(oldPassword, existingUser.password)
+    const isPasswordMatch = await bcrypt.compare(body.oldPassword, existingUser.password)
     if (!isPasswordMatch) {
         return res.status(401).json({
             message: 'New password must be different from the old password'
@@ -322,7 +389,7 @@ router.put('/forget/:username', async (req, res) => {
     }
 
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    const hashedPassword = await bcrypt.hash(body.newPassword, saltRounds);
     existingUser.password = hashedPassword
 
     await existingUser.save()
