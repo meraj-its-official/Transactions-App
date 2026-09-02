@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from "react-hot-toast"; // Toast import kiya
 import axios from "axios";
+import { AppbarHeading } from '../components/Appbar'
 
 export const Signup = () => {
     const [formData, setFormData] = useState({
@@ -39,6 +40,7 @@ export const Signup = () => {
             // ✅ Agar signup success ho gaya toh mast Pop-up dikhao
             toast.success(response.data.message || "Account Created Successfully!")
             localStorage.setItem('token', response.data.token)
+            localStorage.setItem('firstname', response.data.firstname)
             navigate('/dashboard')
 
         } catch (error) {
@@ -53,20 +55,29 @@ export const Signup = () => {
     };
 
 
-    return <div className='bg-slate-300 h-screen flex justify-center'>
-        <div className='flex flex-col justify-center'>
-            <div className='rounded-lg bg-white w-80 text-center p-2 h-max px-4 shadow-xl/30 ...'>
-                <Heading label={"Sign Up"} />
-                <SubHeading label={"Enter your information to create an account"} />
-                <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='username' label={'Username'} errors={errors} />
-                <InputBox filled={handleChange} type='text' value={formData.firstname} name='firstname' placeholder='Jhon' label={'Firstname'} errors={errors} />
-                <InputBox filled={handleChange} type='text' value={formData.lastname} name='lastname' placeholder='David' label={'Lastname'} errors={errors} />
-                <InputBox filled={handleChange} type='text' value={formData.email} name='email' placeholder='abcd@gmail.com' label={'E-mail'} errors={errors} />
-                <InputBox filled={handleChange} type='password' value={formData.password} name='password' placeholder='Abc@123' label={'Password'} errors={errors} />
-                <div className='pt-4'>
-                    <Button onPress={handleSubmit} label={"Sign up"} />
+    return <div className='h-screen flex justify-center'>
+        <div className='bg-blue-600 w-full'>
+            <AppbarHeading />
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <div className='flex justify-center'>
+                <div className='rounded-lg bg-white w-80 text-center p-2 h-max px-4 shadow-xl/30 ...'>
+                    <Heading label={"Sign Up"} />
+                    <SubHeading label={"Enter your information to create an account"} />
+                    <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
+                        <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='username' label={'Username'} errors={errors} />
+                        <InputBox filled={handleChange} type='text' value={formData.firstname} name='firstname' placeholder='Jhon' label={'Firstname'} errors={errors} />
+                        <InputBox filled={handleChange} type='text' value={formData.lastname} name='lastname' placeholder='David' label={'Lastname'} errors={errors} />
+                        <InputBox filled={handleChange} type='text' value={formData.email} name='email' placeholder='abcd@gmail.com' label={'E-mail'} errors={errors} />
+                        <InputBox filled={handleChange} type='password' value={formData.password} name='password' placeholder='Abc@123' label={'Password'} errors={errors} />
+                        <div className='pt-4'>
+                            <Button label={"Sign up"} />
+                        </div>
+                    </form>
+                    <ButtomWarning label={'Already have an account?'} buttonText={'Signin'} to={'/signin'} />
                 </div>
-                <ButtomWarning label={'Already have an account?'} buttonText={'Signin'} to={'/signin'} />
             </div>
         </div>
     </div >

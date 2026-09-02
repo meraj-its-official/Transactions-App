@@ -6,12 +6,13 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from "react-hot-toast"; // Toast import kiya
 import axios from "axios";
+import { AppbarHeading } from '../components/Appbar'
 
 export const ForgetPassword = () => {
     const [formData, setFormData] = useState({
         username: "",
-        oldPassword: "",
-        newPassword: ""
+        password: "",
+        confirmPassword: ""
     });
     const [errors, setErrors] = useState({})
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ export const ForgetPassword = () => {
 
         try {
             // Backend ko request bhejo
-            const response = await axios.put(`http://localhost:3000/api/v1/user/forget/${formData.username || 'user'}`, { ...formData })
+            const response = await axios.put('http://localhost:3000/api/v1/user/forget-password', { ...formData })
 
             // ✅ Agar forgetPassword success ho gaya toh mast Pop-up dikhao
             toast.success(response.data.message || "Password Created Successfully!")
@@ -50,16 +51,25 @@ export const ForgetPassword = () => {
     };
 
 
-    return <div className='bg-slate-300 h-screen flex justify-center'>
-        <div className='flex flex-col justify-center'>
-            <div className='rounded-lg bg-white w-100 text-center p-2 h-max px-4 shadow-xl/30 ...'>
-                <Heading label={"Create New Password"} />
-                <SubHeading label={"Enter your information to create new password"} />
-                <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='Enter existing username or e-mail' label={'Username'} errors={errors} />
-                <InputBox filled={handleChange} type='text' value={formData.oldPassword} name='oldPassword' placeholder='Current Password' label={'Current Password'} errors={errors} />
-                <InputBox filled={handleChange} type='password' value={formData.newPassword} name='newPassword' placeholder='New Password' label={'New Password'} errors={errors} />
-                <div className='pt-4'>
-                    <Button onPress={handleSubmit} label={"Create New Password"} />
+    return <div className='h-screen flex justify-center'>
+        <div className='bg-blue-600 w-full'>
+            <AppbarHeading />
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <div className='flex justify-center'>
+                <div className='rounded-lg bg-white w-100 text-center p-2 h-max px-4 shadow-xl/30 ...'>
+                    <Heading label={"Create New Password"} />
+                    <SubHeading label={"Enter your information to create new password"} />
+                    <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
+                        <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='Enter existing username or e-mail' label={'Username'} errors={errors} />
+                        <InputBox filled={handleChange} type='text' value={formData.password} name='password' placeholder='New Password' label={'New Password'} errors={errors} />
+                        <InputBox filled={handleChange} type='password' value={formData.confirmPassword} name='confirmPassword' placeholder='Confirm Password' label={'Confirm Password'} errors={errors} />
+                        <div className='pt-4'>
+                            <Button label={"Create New Password"} />
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

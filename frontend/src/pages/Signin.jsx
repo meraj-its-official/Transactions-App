@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from "axios";
 import toast from "react-hot-toast"; // Toast import kiya
+import { AppbarHeading } from '../components/Appbar'
 
 export const Signin = () => {
     const [formData, setFormData] = useState({
@@ -36,12 +37,13 @@ export const Signin = () => {
             // ✅ Agar signup success ho gaya toh mast Pop-up dikhao
             toast.success(response.data.message || "User Signin Successfully!")
             localStorage.setItem('token', response.data.token)
+            localStorage.setItem('firstname', response.data.firstname);
             navigate('/dashboard')
 
         } catch (error) {
             // ❌ Agar backend se Zod validation ka error aaya (status 411)
             if (error.response && error.response.status === 411) {
-                setErrors(error.response.data.errors || {}); // Input box red karne ke liye state update
+                setErrors(error.response?.data?.errors || {}); // Input box red karne ke liye state update
                 toast.error("Please fill the details correctly!"); // Error wala Pop-up
             } else {
                 toast.error("Something went wrong on the server!");
@@ -50,20 +52,31 @@ export const Signin = () => {
     };
 
 
-    return <div className='bg-slate-300 h-screen flex justify-center'>
-        <div className='flex flex-col justify-center'>
-            <div className='rounded-lg bg-white w-80 text-center p-2 h-max px-4 shadow-xl/30 ...'>
-                <Heading label={"Sign In"} />
-                <SubHeading label={"Enter your information to signin into your account"} />
-                <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='username or e-mail' label={'Username'} errors={errors} />
-                <InputBox filled={handleChange} type='password' value={formData.password} name='password' placeholder='Abc@123' label={'Password'} errors={errors} />
-                <Link className='pointer underline pl-1 cursor-pointer text-gray-700 flex justify-end' to={'/forget'}>
-                    Forget Password?
-                </Link>
-                <div className='pt-4'>
-                    <Button onPress={handleSubmit} label={"Sign in"} />
+    return <div className='h-screen flex justify-center'>
+        <div className='bg-blue-600 w-full'>
+            <AppbarHeading />
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <div className='flex justify-center'>
+                <div className='flex flex-col justify-center'>
+                    <div className='rounded-lg bg-white w-80 text-center p-2 h-max px-4 shadow-xl/30 ...'>
+                        <Heading label={"Sign In"} />
+                        <SubHeading label={"Enter your information to signin into your account"} />
+                        <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
+                            <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='username or email' label={'Username / Email'} errors={errors} />
+                            <InputBox filled={handleChange} type='password' value={formData.password} name='password' placeholder='Abc@123' label={'Password'} errors={errors} />
+                            <Link className='pointer underline pl-1 cursor-pointer text-gray-700 flex justify-end' to={'/forget'}>
+                                Forget Password?
+                            </Link>
+                            <div className='pt-4'>
+                                <Button label={"Sign in"} />
+                            </div>
+                        </form>
+                        <ButtomWarning label={`Don't have an account?`} buttonText={'Signup'} to={'/signup'} />
+                    </div>
                 </div>
-                <ButtomWarning label={`Don't have an account?`} buttonText={'Signup'} to={'/signup'} />
             </div>
         </div>
     </div >
