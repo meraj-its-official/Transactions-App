@@ -1,26 +1,27 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-const authMiddleware = (res, req, next) => {
+const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer')) {
-        return res.status(403).json({});
+    // Space ke sath split check karein
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(403).json({ message: "Invalid or missing token" });
     }
 
-    const token = authHeader.split('')[1];
+    const token = authHeader.split(" ")[1]; // Note: space (' ') inside split
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        if (decoded.userId) {
-            req.userId = decoded.userId
+        if (decoded && decoded.userId) {
+            req.userId = decoded.userId;
             next();
         } else {
-            return res.status(403).json({});
+            return res.status(403).json({ message: "Unauthorized access" });
         }
     } catch (error) {
-        return res.status(403).json({});
-    };
-}
+        return res.status(403).json({ message: "Invalid token" });
+    }
+};
 
 module.exports = authMiddleware
