@@ -22,6 +22,7 @@ export const SendMoney = ({ isOpen, onClose, }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         setErrors({});
 
         setLoading(true);
@@ -37,10 +38,6 @@ export const SendMoney = ({ isOpen, onClose, }) => {
             }
             );
 
-            if (response.data.token) {
-                localStorage.setItem("token", response.data.token);
-            }
-
             toast.success(response.data.message || "Payment Successfully");
             setTimeout(() => {
                 onClose();
@@ -52,11 +49,11 @@ export const SendMoney = ({ isOpen, onClose, }) => {
             // 1. Zod Validation Errors (411)
             if (status === 411 && data?.errors) {
                 setErrors(data.errors);
-                toast.error("Please fill the details correctly!");
+                toast.error("Please fill the amount!");
             }
             // 2. Fallback generic errors
             else {
-                toast.error(data?.message || "Payment Failed");
+                toast.error(data?.message || "Payment Failed ! Please try again.");
             }
         } finally {
             setLoading(false);
@@ -85,7 +82,7 @@ export const SendMoney = ({ isOpen, onClose, }) => {
                     </div>
                     <InputBoxSend
                         filled={handleChange}
-                        type="number"
+                        type="text"
                         id="amount"
                         placeholder="Enater Amount"
                         label={`Amount ( \u20B9 )`}
