@@ -26,7 +26,6 @@ export const Signin = () => {
     };
 
     const handleSubmit = async (e) => {
-        console.log("Current Errors State:", errors);
         e.preventDefault();
         setErrors({}); // Puraane errors clear karo
 
@@ -61,9 +60,13 @@ export const Signin = () => {
             <br></br>
             <div className='flex justify-center'>
                 <div className='flex flex-col justify-center'>
-                    <div className='rounded-lg bg-white w-80 text-center p-2 h-max px-4 shadow-xl/30 ...'>
-                        <Heading label={"Sign In"} />
-                        <SubHeading label={"Enter your information to signin into your account"} />
+                    <div className='relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 overflow-hidden shadow-xl/30 ...'>
+                        <div className="flex justify-center">
+                            <div>
+                                <div className="flex justify-center"><Heading label={"Sign In"} /></div>
+                                <div><SubHeading label={"Enter your information to signin into your account"} /></div>
+                            </div>
+                        </div>
                         <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
                             <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='username or email' label={'Username / Email'} errors={errors} />
                             <InputBox filled={handleChange} type='password' value={formData.password} name='password' placeholder='Abc@123' label={'Password'} errors={errors} />

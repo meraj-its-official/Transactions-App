@@ -1,7 +1,7 @@
 import { Heading } from '../components/Heading'
 import { SubHeading } from '../components/SubHeading'
 import { InputBox } from '../components/InputBox'
-import { Button } from '../components/Button'
+import { Button, ButtonNew } from '../components/Button'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from "react-hot-toast"; // Toast import kiya
@@ -59,9 +59,13 @@ export const ForgetPassword = () => {
             <br></br>
             <br></br>
             <div className='flex justify-center'>
-                <div className='rounded-lg bg-white w-100 text-center p-2 h-max px-4 shadow-xl/30 ...'>
-                    <Heading label={"Create New Password"} />
-                    <SubHeading label={"Enter your information to create new password"} />
+                <div className='relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 overflow-hidden shadow-xl/30 ...'>
+                    <div className="flex justify-center">
+                        <div>
+                            <div className="flex justify-center"> <Heading label={"Create New Password"} /></div>
+                            <div> <SubHeading label={"Enter your information to create new password"} /></div>
+                        </div>
+                    </div>
                     <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
                         <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='Enter existing username or e-mail' label={'Username'} errors={errors} />
                         <InputBox filled={handleChange} type='text' value={formData.password} name='password' placeholder='New Password' label={'New Password'} errors={errors} />
@@ -70,6 +74,12 @@ export const ForgetPassword = () => {
                             <Button label={"Create New Password"} />
                         </div>
                     </form>
+                    <div className='flex justify-center w-full px-5 py-2.5 me-2 mb-2 text-2xl font-light border-solid border-gray-500 border-b-gray-500 ' >
+                        <p>  ________OR_________ </p>
+                    </div>
+                    <div className='pt-4'>
+                        <ButtonNew label={"Create New Account"} to={'/signup'} />
+                    </div>
                 </div>
             </div>
         </div>

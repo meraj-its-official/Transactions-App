@@ -3,7 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { InputBoxU } from "../components/InputBox";
 import { ButtonC, ButtonU, ButtonX } from "../components/Button";
-import { HeadingU } from "../components/Heading";
+import { Heading } from "../components/Heading";
 
 export const UpdatePasswordModal = ({ isOpen, onClose }) => {
     const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ export const UpdatePasswordModal = ({ isOpen, onClose }) => {
         newPassword: "",
         confirmPassword: "",
     });
+
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -56,7 +57,7 @@ export const UpdatePasswordModal = ({ isOpen, onClose }) => {
                 localStorage.setItem("token", response.data.token);
             }
 
-            toast.success(response.data.message || "Password updated successfully!");
+            toast.success(response.data.message || "Password updated successfully");
             setTimeout(() => {
                 onClose();
             }, 1500);
@@ -93,8 +94,8 @@ export const UpdatePasswordModal = ({ isOpen, onClose }) => {
                 {/* Header */}
                 <div className="flex justify-between items-center pb-4 border-b border-gray-100">
                     <div>
-                        <HeadingU label={"Update Password"} />
-                        <p className="text-xs text-gray-500 mt-0.5">Ensure your account uses a secure password.</p>
+                        <Heading label={"Update Password"} />
+                        <div className="text-xs text-gray-500 mt-0.5">Ensure your account uses a secure password.</div>
                     </div>
                     <ButtonX onPress={onClose} label={"✕"} />
                 </div>

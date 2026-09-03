@@ -1,11 +1,13 @@
+import { Link } from "react-router"
+
 // parent props -> ({-, -})
-export const Button = ({ label }) => {
-    return <button type="submit" className='w-full text-white bg-blue-600
-     hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-gray-300 cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2'> {label} </button>
+export const Button = ({ label, onPress }) => {
+    return <button onClick={onPress} type="submit" className='w-full text-white bg-blue-600
+     hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-gray-300 cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2'> {label} </button>
 }
 
 export const ButtonU = ({ label }) => {
-    return <button type="submit" className="px-4 py-2 text-xs cursor-pointer font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg shadow-sm transition 
+    return <button type="submit" className="px-4 py-2 text-xs cursor-pointer font-medium text-white bg-blue-600 hover:bg-blue-800 disabled:opacity-50 rounded-lg shadow-sm transition 
     flex items-center gap-1.5"> {label} </button>
 }
 
@@ -31,3 +33,12 @@ export const ButtonOut = ({ label, onPress }) => {
         </svg> {label} </button>
 }
 
+export const ButtonSend = ({ label }) => {
+    return <button type="submit" className="w-full px-5 py-2.5 me-2 mb-2 text-sm cursor-pointer font-medium text-white bg-blue-600 hover:bg-green-600 disabled:opacity-50 rounded-lg shadow-sm transition 
+    flex justify-center gap-1.5"> {label} </button>
+}
+export const ButtonNew = ({ label, to }) => {
+    return <Link to={to}>  <button type="button" className=" w-full px-5 py-2.5 me-2 mb-2 text-sm font-medium cursor-pointer  text-white bg-gray-700 hover:bg-gray-900 rounded-lg transition" >
+        {label}
+    </button> </Link>
+}

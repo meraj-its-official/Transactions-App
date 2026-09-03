@@ -54,7 +54,6 @@ export const Signup = () => {
         }
     };
 
-
     return <div className='h-screen flex justify-center'>
         <div className='bg-blue-600 w-full'>
             <AppbarHeading />
@@ -63,13 +62,19 @@ export const Signup = () => {
             <br></br>
             <br></br>
             <div className='flex justify-center'>
-                <div className='rounded-lg bg-white w-80 text-center p-2 h-max px-4 shadow-xl/30 ...'>
-                    <Heading label={"Sign Up"} />
-                    <SubHeading label={"Enter your information to create an account"} />
+                <div className='relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 overflow-hidden shadow-xl/30 ...'>
+                    <div className="flex justify-center">
+                        <div>
+                            <div className="flex justify-center"><Heading label={"Sign Up"} /></div>
+                            <div><SubHeading label={"Enter your information to create an account"} /></div>
+                        </div>
+                    </div>
                     <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
+                        <div className="grid grid-cols-2 gap-3">
+                            <InputBox filled={handleChange} type='text' value={formData.firstname} name='firstname' placeholder='Jhon' label={'Firstname'} errors={errors} />
+                            <InputBox filled={handleChange} type='text' value={formData.lastname} name='lastname' placeholder='David' label={'Lastname'} errors={errors} />
+                        </div>
                         <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='username' label={'Username'} errors={errors} />
-                        <InputBox filled={handleChange} type='text' value={formData.firstname} name='firstname' placeholder='Jhon' label={'Firstname'} errors={errors} />
-                        <InputBox filled={handleChange} type='text' value={formData.lastname} name='lastname' placeholder='David' label={'Lastname'} errors={errors} />
                         <InputBox filled={handleChange} type='text' value={formData.email} name='email' placeholder='abcd@gmail.com' label={'E-mail'} errors={errors} />
                         <InputBox filled={handleChange} type='password' value={formData.password} name='password' placeholder='Abc@123' label={'Password'} errors={errors} />
                         <div className='pt-4'>
