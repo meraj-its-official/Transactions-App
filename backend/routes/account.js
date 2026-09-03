@@ -5,16 +5,30 @@ const { default: mongoose } = require('mongoose');
 const router = express.Router();
 
 router.get('/balance', authMiddleware, async (req, res) => {
-    const account = await Account.findOne({
-        userId: req.userId
-    })
-    res.json({
-        balance: account.balance
-    })
+    try {
+        // req.userId authMiddleware se inject hoti hai
+        const account = await Account.findOne({
+            userId: req.userId
+        });
+
+        if (!account) {
+            return res.status(404).json({
+                message: "Account not found"
+            });
+        }
+
+        res.status(200).json({
+            balance: account.balance
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
 })
 
 try {
-    router.post('/transfar', authMiddleware, async (req, res) => {
+    router.post('/transfer', authMiddleware, async (req, res) => {
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -26,7 +40,8 @@ try {
         if (!account || account.balance < amount) {
             await session.abortTransaction()
             return res.status(400).json({
-                message: "Insuficent Balance"
+                message: "Insuficent Balance",
+                errors: result.error.flatten().fieldErrors
             })
         }
 
@@ -35,7 +50,8 @@ try {
         if (!toaccount) {
             await session.abortTransaction()
             return res.status(400).json({
-                message: 'Invalid Account'
+                message: 'Invalid Account',
+                errors: result.error.flatten().fieldErrors
             })
         }
 
@@ -54,7 +70,8 @@ try {
     })
 } catch (error) {
     return res.status(504).json({
-        message: "Sorry ! Someting is Wrong in Interal Server"
+        message: "Sorry ! Someting is Wrong in Interal Server",
+        errors: result.error.flatten().fieldErrors
     })
 }
 

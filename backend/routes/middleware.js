@@ -12,7 +12,6 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
         if (decoded && decoded.userId) {
             req.userId = decoded.userId;
             next();

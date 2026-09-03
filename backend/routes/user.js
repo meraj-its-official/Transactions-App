@@ -372,6 +372,7 @@ router.get('/bulk', async (req, res) => {
             }
         }]
     })
+        .limit(5);
 
     res.json({
         user: users.map(user => ({
