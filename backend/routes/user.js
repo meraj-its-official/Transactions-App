@@ -370,7 +370,8 @@ router.get('/bulk', async (req, res) => {
             lastname: {
                 "$regex": filter
             }
-        }]
+        }],
+        _id: { $ne: req.userId }
     })
         .limit(5);
 

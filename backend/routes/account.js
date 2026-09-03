@@ -27,15 +27,22 @@ router.get('/balance', authMiddleware, async (req, res) => {
     }
 })
 
-try {
-    router.post('/transfer', authMiddleware, async (req, res) => {
+
+router.post('/transfer', authMiddleware, async (req, res) => {
+    try {
+        const { amount, to } = req.body
+
+        if (req.userId === to) {
+            return res.status(400).json({
+                message: "Cannot transfer money to yourself"
+            });
+        }
+
         const session = await mongoose.startSession();
         session.startTransaction();
 
-        const { amount, to } = req.body
-
         // Fetch the accounts while Transaction
-        const account = await Account.findOne({ userId: req.body }).session(session)
+        const account = await Account.findOne({ userId: req.userId }).session(session)
 
         if (!account || account.balance < amount) {
             await session.abortTransaction()
@@ -44,7 +51,7 @@ try {
                 errors: result.error.flatten().fieldErrors
             })
         }
-
+        // Fetch the accounts for Transaction whom
         const toaccount = await Account.findOne({ userId: to }).session(session)
 
         if (!toaccount) {
@@ -67,12 +74,16 @@ try {
         res.json({
             message: "Transfar Successful"
         })
-    })
-} catch (error) {
-    return res.status(504).json({
-        message: "Sorry ! Someting is Wrong in Interal Server",
-        errors: result.error.flatten().fieldErrors
-    })
-}
+
+    } catch (error) {
+        await session.abortTransaction();
+        return res.status(504).json({
+            message: "Sorry ! Someting is Wrong in Interal Server",
+            errors: result.error.flatten().fieldErrors
+        })
+    } finally {
+        session.endSession();
+    }
+})
 
 module.exports = router
