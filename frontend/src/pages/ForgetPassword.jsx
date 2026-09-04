@@ -67,7 +67,7 @@ export const ForgetPassword = () => {
                         </div>
                     </div>
                     <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
-                        <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='Enter existing username or e-mail' label={'Username'} errors={errors} />
+                        <InputBox filled={handleChange} type='text' value={formData.username} name='username' placeholder='Enter existing username or email' label={'Username / Email'} errors={errors} />
                         <InputBox filled={handleChange} type='text' value={formData.password} name='password' placeholder='New Password' label={'New Password'} errors={errors} />
                         <InputBox filled={handleChange} type='password' value={formData.confirmPassword} name='confirmPassword' placeholder='Confirm Password' label={'Confirm Password'} errors={errors} />
                         <div className='pt-4'>

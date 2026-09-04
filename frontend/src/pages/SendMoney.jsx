@@ -10,15 +10,21 @@ export const SendMoney = ({ isOpen, onClose, }) => {
     const [searchParams] = useSearchParams();
     const id = searchParams.get("id");
     const name = searchParams.get("name");
-    const [amount, setAmount] = useState("")
+    const [amount, setAmount] = useState({
+        amount: "",
+    })
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
     if (!isOpen) return null;
 
+    // Input change handle karne ke liye (red border hatane ke liye jab user type kare)
     const handleChange = (e) => {
-        setAmount(e.target.value);
-    };
+        setAmount({ ...amount, [e.target.name]: e.target.value });
+        if (errors[e.target.name]) {
+            setErrors({ ...errors, [e.target.name]: null });
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,7 +54,7 @@ export const SendMoney = ({ isOpen, onClose, }) => {
 
             // 1. Zod Validation Errors (411)
             if (status === 411 && data?.errors) {
-                setErrors(data.errors);
+                setErrors(data.errors || {});
                 toast.error("Please fill the amount!");
             }
             // 2. Fallback generic errors
@@ -82,6 +88,7 @@ export const SendMoney = ({ isOpen, onClose, }) => {
                     </div>
                     <InputBoxSend
                         filled={handleChange}
+                        name="amount"
                         type="text"
                         id="amount"
                         placeholder="Enater Amount"

@@ -3,6 +3,7 @@ const authMiddleware = require('./middleware');
 const { Account } = require('../db');
 const { default: mongoose } = require('mongoose');
 const router = express.Router();
+const z = require('zod')
 
 router.get('/balance', authMiddleware, async (req, res) => {
     try {
@@ -27,16 +28,40 @@ router.get('/balance', authMiddleware, async (req, res) => {
     }
 })
 
+const transferSchema = z.object({
+    to: z.string().min(1, "Recipient ID is required"),
+    from: z.string().min(1, "Sender ID is required"),
+    // z.coerce string input (jaise "100") ko automatic number bana dega
+    amount: z.coerce.number({
+        invalid_type_error: "Please enter a valid amount"
+    }).positive("Amount must be greater than 0")
+}).superRefine((val, ctx) => {
+    // Self-transfer check
+    if (val.from === val.to) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Cannot transfer money to yourself",
+            path: ["to"]
+        });
+    }
+})
 
 router.post('/transfer', authMiddleware, async (req, res) => {
     try {
-        const { amount, to } = req.body
+        const validationResult = transferSchema.safeParse({
+            to: req.body.to,
+            amount: req.body.amount,
+            from: req.userId
+        });
 
-        if (req.userId === to) {
+        if (!validationResult.success) {
             return res.status(400).json({
-                message: "Cannot transfer money to yourself"
+                message: "Validation failed",
+                errors: validationResult.error.flatten().fieldErrors
             });
         }
+
+        const { amount, to } = validationResult.data;
 
         const session = await mongoose.startSession();
         session.startTransaction();
