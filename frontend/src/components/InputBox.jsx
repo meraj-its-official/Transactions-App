@@ -79,6 +79,7 @@ export const InputBoxSend = ({ label, placeholder, filled, type, id, value, name
             <input
                 onChange={filled}
                 type={type}
+                value={value}
                 id={id}
                 placeholder={placeholder}
                 className={`w-full px-3 py-2 text-sm rounded-lg text-gray-900 outline-none transition-all border ${errorMessage

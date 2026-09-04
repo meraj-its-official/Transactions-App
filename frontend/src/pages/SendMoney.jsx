@@ -36,7 +36,7 @@ export const SendMoney = ({ isOpen, onClose, }) => {
             const token = localStorage.getItem("token");
             const response = await axios.post("http://localhost:3000/api/v1/account/transfer", {
                 to: id,
-                amount: Number(amount)
+                amount: Number(amount.amount)
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -53,9 +53,9 @@ export const SendMoney = ({ isOpen, onClose, }) => {
             const data = err.response?.data;
 
             // 1. Zod Validation Errors (411)
-            if (status === 411 && data?.errors) {
+            if (status === 400 && data?.errors) {
                 setErrors(data.errors || {});
-                toast.error("Please fill the amount!");
+                toast.error(data.errors.amount?.[0] || "Please fill the amount!");
             }
             // 2. Fallback generic errors
             else {
@@ -90,6 +90,7 @@ export const SendMoney = ({ isOpen, onClose, }) => {
                         filled={handleChange}
                         name="amount"
                         type="text"
+                        value={amount.amount}
                         id="amount"
                         placeholder="Enater Amount"
                         label={`Amount ( \u20B9 )`}

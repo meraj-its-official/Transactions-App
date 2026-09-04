@@ -33,8 +33,10 @@ const transferSchema = z.object({
     from: z.string().min(1, "Sender ID is required"),
     // z.coerce string input (jaise "100") ko automatic number bana dega
     amount: z.coerce.number({
-        invalid_type_error: "Please enter a valid amount"
-    }).positive("Amount must be greater than 0")
+        required_error: "Please enter the amount",
+        invalid_type_error: "Amount should be a valid number",
+    })
+        .positive("Please enter valid amount"),
 }).superRefine((val, ctx) => {
     // Self-transfer check
     if (val.from === val.to) {
@@ -47,23 +49,25 @@ const transferSchema = z.object({
 })
 
 router.post('/transfer', authMiddleware, async (req, res) => {
-    try {
-        const validationResult = transferSchema.safeParse({
-            to: req.body.to,
-            amount: req.body.amount,
-            from: req.userId
+
+    const validationResult = transferSchema.safeParse({
+        to: req.body.to,
+        amount: req.body.amount,
+        from: req.userId
+    });
+
+    if (!validationResult.success) {
+        return res.status(400).json({
+            message: "Validation failed",
+            errors: validationResult.error.flatten().fieldErrors
         });
+    }
 
-        if (!validationResult.success) {
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResult.error.flatten().fieldErrors
-            });
-        }
+    const { amount, to } = validationResult.data;
 
-        const { amount, to } = validationResult.data;
+    const session = await mongoose.startSession();
 
-        const session = await mongoose.startSession();
+    try {
         session.startTransaction();
 
         // Fetch the accounts while Transaction
@@ -73,7 +77,7 @@ router.post('/transfer', authMiddleware, async (req, res) => {
             await session.abortTransaction()
             return res.status(400).json({
                 message: "Insuficent Balance",
-                errors: result.error.flatten().fieldErrors
+                errors: validationResult.error.flatten().fieldErrors
             })
         }
         // Fetch the accounts for Transaction whom
@@ -83,7 +87,7 @@ router.post('/transfer', authMiddleware, async (req, res) => {
             await session.abortTransaction()
             return res.status(400).json({
                 message: 'Invalid Account',
-                errors: result.error.flatten().fieldErrors
+                errors: validationResult.error.flatten().fieldErrors
             })
         }
 
@@ -103,11 +107,11 @@ router.post('/transfer', authMiddleware, async (req, res) => {
     } catch (error) {
         await session.abortTransaction();
         return res.status(504).json({
-            message: "Sorry ! Someting is Wrong in Interal Server",
-            errors: result.error.flatten().fieldErrors
+            message: "Internal server error",
+            errors: validationResult.error.flatten().fieldErrors
         })
     } finally {
-        session.endSession();
+        await session.endSession();
     }
 })
 
