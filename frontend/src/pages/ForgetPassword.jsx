@@ -43,9 +43,9 @@ export const ForgetPassword = () => {
             // ❌ Agar backend se Zod validation ka error aaya (status 411)
             if (error.response && (error.response.status === 400 || error.response.status === 411)) {
                 setErrors(error.response.data.errors || {}); // ✅ State update hogi aur red border aa jayega
-                toast.error(error.response.data.message || "Please fill the details correctly!"); // Error wala Pop-up
+                toast.error(error.response.data.message || <p className="text-xs text-red-500 mt-1 font-medium pl-1"> {"Please fill the details correctly!"} </p>); // Error wala Pop-up
             } else {
-                toast.error(error.response?.data?.message || "Something went wrong on the server!");
+                toast.error(error.response?.data?.message || <p className="text-xs text-red-500 mt-1 font-medium pl-1"> {"Something went wrong on the server!"} </p>);
             }
         }
     };

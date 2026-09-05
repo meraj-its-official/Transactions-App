@@ -68,18 +68,19 @@ export const InputBoxU = ({
 
 // 3. Initiate Money ke liye InputSend
 export const InputBoxSend = ({ label, placeholder, filled, type, id, value, name, errors = {}, }) => {
-    const fieldError = errors && errors[name];
+    const fieldError = errors && (errors[name] || (name === "amount" ? errors.to : null));
     const errorMessage = Array.isArray(fieldError) ? fieldError[0] : fieldError;
 
     return (
         <div>
-            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="amount">
+            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" htmlFor="amount">
                 {label}
             </label>
             <input
                 onChange={filled}
                 type={type}
                 value={value}
+                name={name}
                 id={id}
                 placeholder={placeholder}
                 className={`w-full px-3 py-2 text-sm rounded-lg text-gray-900 outline-none transition-all border ${errorMessage

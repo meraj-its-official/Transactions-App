@@ -68,7 +68,7 @@ export const UpdatePasswordModal = ({ isOpen, onClose }) => {
             // 1. Zod Validation Errors (411)
             if (status === 411 && data?.errors) {
                 setErrors(data.errors);
-                toast.error("Please fill the details correctly!");
+                toast.error(<p className="text-xs text-red-500 mt-1 font-medium pl-1"> {"Please fill the details correctly!"} </p>);
             }
             // 2. Logic Errors (400 - Wrong Old Password or Same Password)
             else if (status === 400 && data?.message) {
@@ -77,11 +77,11 @@ export const UpdatePasswordModal = ({ isOpen, onClose }) => {
                 } else if (data.message.toLowerCase().includes("different")) {
                     setErrors({ newPassword: [data.message] });
                 }
-                toast.error(data.message);
+                toast.error(<p className="text-xs text-red-500 mt-1 font-medium pl-1"> {data.message} </p>);
             }
             // 3. Fallback generic errors
             else {
-                toast.error(data?.message || "Failed to update password");
+                toast.error(data?.message || <p className="text-xs text-red-500 mt-1 font-medium pl-1"> {"Failed to update password"} </p>);
             }
         } finally {
             setLoading(false);

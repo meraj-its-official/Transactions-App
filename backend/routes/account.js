@@ -51,9 +51,9 @@ const transferSchema = z.object({
 router.post('/transfer', authMiddleware, async (req, res) => {
 
     const validationResult = transferSchema.safeParse({
-        to: req.body.to,
+        to: String(req.body.to),
         amount: req.body.amount,
-        from: req.userId
+        from: String(req.userId)
     });
 
     if (!validationResult.success) {

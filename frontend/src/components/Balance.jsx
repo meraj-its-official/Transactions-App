@@ -17,8 +17,6 @@ export const Balance = () => {
                 setBalance(response.data.balance);
             } catch (error) {
                 // console.error("Failed to load balance", error);
-                console.log("Status:", error.response?.status);
-                console.log("Error Data:", error.response?.data);
             } finally {
                 setLoading(false);
             }

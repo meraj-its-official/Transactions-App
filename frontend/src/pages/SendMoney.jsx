@@ -20,11 +20,14 @@ export const SendMoney = ({ isOpen, onClose, }) => {
 
     // Input change handle karne ke liye (red border hatane ke liye jab user type kare)
     const handleChange = (e) => {
-        setAmount({ ...amount, [e.target.name]: e.target.value });
-        if (errors[e.target.name]) {
-            setErrors({ ...errors, [e.target.name]: null });
+        console.log("Field Name:", e.target.name);
+        console.log("Typed Value:", e.target.value);
+        const { name, value } = e.target;
+        setAmount((prev) => ({ ...prev, [name]: value }));
+        if (errors[name]) {
+            setErrors((prev) => ({ ...prev, [name]: null }));
         }
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -51,15 +54,16 @@ export const SendMoney = ({ isOpen, onClose, }) => {
         } catch (err) {
             const status = err.response?.status;
             const data = err.response?.data;
+            const firstErrorMessage =
+                data?.errors?.amount?.[0] ||
+                data?.errors?.to?.[0] ||
+                data?.message ||
+                "Payment Failed! Please try again.";
 
             // 1. Zod Validation Errors (411)
             if (status === 400 && data?.errors) {
                 setErrors(data.errors || {});
-                toast.error(data.errors.amount?.[0] || "Please fill the amount!");
-            }
-            // 2. Fallback generic errors
-            else {
-                toast.error(data?.message || "Payment Failed ! Please try again.");
+                toast.error(<p className="text-xs text-red-500 mt-1 font-medium pl-1"> {firstErrorMessage} </p>);
             }
         } finally {
             setLoading(false);
@@ -80,11 +84,11 @@ export const SendMoney = ({ isOpen, onClose, }) => {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} noValidate className="mt-4 space-y-3">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                            <span class="text-2xl text-white">{name[0].toUpperCase()}</span>
+                    <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+                            <span className="text-2xl text-white">{name[0].toUpperCase()}</span>
                         </div>
-                        <h3 class="text-2xl font-semibold">{name} </h3>
+                        <h3 className="text-2xl font-semibold">{name} </h3>
                     </div>
                     <InputBoxSend
                         filled={handleChange}

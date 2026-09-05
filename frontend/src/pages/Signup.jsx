@@ -47,9 +47,9 @@ export const Signup = () => {
             // ❌ Agar backend se Zod validation ka error aaya (status 411)
             if (error.response && error.response.status === 411) {
                 setErrors(error.response.data.errors || {}); // Input box red karne ke liye state update
-                toast.error("Please fill the details correctly!"); // Error wala Pop-up
+                toast.error(<p className="text-xs text-red-500 mt-1 font-medium pl-1"> {"Please fill the details correctly!"} </p>); // Error wala Pop-up
             } else {
-                toast.error("Something went wrong on the server!");
+                toast.error(<p className="text-xs text-red-500 mt-1 font-medium pl-1"> {"Something went wrong on the server!"} </p>);
             }
         }
     };
