@@ -45,7 +45,7 @@ function App() {
         <TokenExpirationChecker />
         <Routes >
           <Route path='/signup' element={<Signup />} />
-          <Route path='/signin' element={<Signin />} />
+          <Route path={'/'} element={<Signin />} />
           <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path='/forget' element={<ForgetPassword />} />
         </Routes>

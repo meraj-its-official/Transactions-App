@@ -35,8 +35,8 @@ export const Signin = () => {
 
             // ✅ Agar signup success ho gaya toh mast Pop-up dikhao
             toast.success(response.data.message || "User Signin Successfully!")
-            localStorage.setItem('token', response.data.token)
             localStorage.setItem('firstname', response.data.firstname);
+            localStorage.setItem('token', response.data.token)
             navigate('/dashboard')
 
         } catch (error) {

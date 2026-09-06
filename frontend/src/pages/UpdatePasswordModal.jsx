@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { InputBoxU } from "../components/InputBox";
 import { ButtonC, ButtonU, ButtonX } from "../components/Button";
 import { Heading } from "../components/Heading";
+import { useNavigate } from 'react-router-dom'
 
 export const UpdatePasswordModal = ({ isOpen, onClose }) => {
     const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ export const UpdatePasswordModal = ({ isOpen, onClose }) => {
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
 
     if (!isOpen) return null;
 
@@ -60,6 +62,9 @@ export const UpdatePasswordModal = ({ isOpen, onClose }) => {
             toast.success(response.data.message || "Password updated successfully");
             setTimeout(() => {
                 onClose();
+                navigate('/');
+                localStorage.removeItem("token");
+                localStorage.removeItem("firstname");
             }, 1500);
         } catch (err) {
             const status = err.response?.status;

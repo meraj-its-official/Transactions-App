@@ -20,8 +20,6 @@ export const SendMoney = ({ isOpen, onClose, }) => {
 
     // Input change handle karne ke liye (red border hatane ke liye jab user type kare)
     const handleChange = (e) => {
-        console.log("Field Name:", e.target.name);
-        console.log("Typed Value:", e.target.value);
         const { name, value } = e.target;
         setAmount((prev) => ({ ...prev, [name]: value }));
         if (errors[name]) {

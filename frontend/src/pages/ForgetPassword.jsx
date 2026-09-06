@@ -36,8 +36,8 @@ export const ForgetPassword = () => {
 
             // ✅ Agar forgetPassword success ho gaya toh mast Pop-up dikhao
             toast.success(response.data.message || "Password Created Successfully!")
-            localStorage.setItem('token', response.data.token)
-            navigate('/signin')
+            // localStorage.setItem('token', response.data.token)
+            navigate('/')
 
         } catch (error) {
             // ❌ Agar backend se Zod validation ka error aaya (status 411)

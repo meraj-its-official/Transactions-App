@@ -81,7 +81,7 @@ export const Signup = () => {
                             <Button label={"Sign up"} />
                         </div>
                     </form>
-                    <ButtomWarning label={'Already have an account?'} buttonText={'Signin'} to={'/signin'} />
+                    <ButtomWarning label={'Already have an account?'} buttonText={'Signin'} to={'/'} />
                 </div>
             </div>
         </div>

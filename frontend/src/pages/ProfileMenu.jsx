@@ -29,7 +29,7 @@ export const ProfileMenu = ({ userInitial = { userFirstletter } }) => {
         localStorage.removeItem("token");
         localStorage.removeItem("firstname");
         setIsOpen(false);
-        navigate("/signin");
+        navigate('/');
     };
 
     return (
