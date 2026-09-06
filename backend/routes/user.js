@@ -87,7 +87,6 @@ router.post('/signup', async (req, res) => {
     if (existingUser) {
         return res.status(411).json({
             message: 'Username already exist',
-            errors: error.flatten().fieldErrors
         })
     }
 
@@ -196,7 +195,6 @@ router.post('/signin', async (req, res) => {
     if (!existingUser) {
         return res.status(411).json({
             message: 'User does not exist',
-            errors: error.flatten().fieldErrors
         })
     }
 
@@ -205,7 +203,6 @@ router.post('/signin', async (req, res) => {
     if (!isPasswordValid) {
         return res.status(411).json({
             message: "Error while LoggingIn / Wrong Password",
-            errors: error.flatten().fieldErrors
         })
     }
     const token = jwt.sign({
@@ -291,7 +288,7 @@ router.put("/update-password", authMiddleware, async (req, res) => {
     if (!result.success) {
         return res.status(411).json({
             message: "Error while updating information",
-            errors: result.error.flatten().fieldErrors,
+            errors: error.flatten().fieldErrors,
         });
     }
 
@@ -302,7 +299,6 @@ router.put("/update-password", authMiddleware, async (req, res) => {
     if (!existingUser) {
         return res.status(404).json({
             message: "User account not found",
-            errors: error.flatten().fieldErrors
         });
     }
 
@@ -315,7 +311,6 @@ router.put("/update-password", authMiddleware, async (req, res) => {
     if (!isFirstnameMatch || !isLastnameMatch || !isUsernameMatch) {
         return res.status(400).json({
             message: "User details do not match account records",
-            errors: error.flatten().fieldErrors
         });
     }
 
@@ -325,7 +320,6 @@ router.put("/update-password", authMiddleware, async (req, res) => {
     if (!isPasswordMatch) {
         return res.status(400).json({
             message: "Incorrect old password",
-            errors: error.flatten().fieldErrors
         });
     }
 
@@ -333,7 +327,6 @@ router.put("/update-password", authMiddleware, async (req, res) => {
     if (oldPassword === newPassword) {
         return res.status(400).json({
             message: "New password must be different from the old password",
-            errors: error.flatten().fieldErrors
         });
     }
 
@@ -467,7 +460,6 @@ router.put('/forget-password', async (req, res) => {
     if (!existingUser) {
         return res.status(404).json({
             message: 'User does not exist',
-            errors: error.flatten().fieldErrors
         })
     }
 
