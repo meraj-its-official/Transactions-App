@@ -83,10 +83,9 @@ Warning: This will wipe all local data and re-apply migrations.
 ## 📡 API Endpoints
 Below is the list of primary REST API endpoints available in the application. All protected routes require a valid Bearer <Token> in the Authorization header.
 
-
-**Authentication (/api/v1/auth)**
 <ul>
-<strong> **Method**           |           **Endpoint**                  |                **Description**                           |        **Protected** </strong> <br>
+<h2>Authentication (/api/v1/auth)</h2>
+<strong>Method       |           Endpoint                      |                Description                               |        Protected </strong> <br>
 POST                 |           /signup                       |  Register a new user and create an empty wallet          |           No <br>
 POST                 |           /signin                       |  Authenticate user and return JWT                        |           No
 </ul>
