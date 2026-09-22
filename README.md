@@ -90,18 +90,20 @@ POST                 |           /signup                       |  Register a new
 POST                 |           /signin                       |  Authenticate user and return JWT                        |           No
 </ul>
 
+<ul>
+<h2>User & Wallet (/api/v1/user)</h2>
+<strong>Method       |           Endpoint                  |                Description                           |        Protected </strong><br>
+GET                  |           /profile                  |       Get logged-in user's details                   |           Yes<br>
+GET                  |           /balance                  |      Retrieve current wallet balance                 |           Yes<br>
+GET                  |           /bulk                     |   Search users to send money to (with filtering)     |           Yes
+</ul>
 
-**User & Wallet (/api/v1/user)**
-**Method**           |           **Endpoint**                  |                **Description**                           |        **Protected**
-GET                  |           /profile                      |       Get logged-in user's details                       |           Yes
-GET                  |           /balance                      |      Retrieve current wallet balance                     |           Yes
-GET                  |           /bulk                         |   Search users to send money to (with filtering)         |           Yes
-
-**Transactions (/api/v1/account)**
-**Method**           |           **Endpoint**                  |                **Description**                                       |        **Protected**
-POST                 |           /transfer                     | Send money to another user (Requires { to: "userId", amount: 100 })  |           Yes
-GET                  |           /history                      |          Retrieve current wallet balance                             |           Yes
-
+<ul>
+<h2>Transactions (/api/v1/account)</h2>
+<strong>Method       |           Endpoint                  |                Description                                           |        Protected</strong><br>
+POST                 |           /transfer                 | Send money to another user (Requires { to: "userId", amount: 100 })  |           Yes<br>
+GET                  |           /history                  |          Retrieve current wallet balance                             |           Yes
+</ul>
 
 ## 🛡️ Security & Scalability Highlights
 
