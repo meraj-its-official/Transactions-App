@@ -39,19 +39,23 @@ PORT=3000
 
 **1. Clone the repository**
 git clone [https://github.com/meraj-its-official/Transactions-App.git](https://github.com/meraj-its-official/Transactions-App.git)
-```cd Transactions-App
+```
+cd Transactions-App
 ```
 
 **2. Install dependencies**
-```npm install
+```
+npm install
 ```
 **3. Set up the Database (Migrations)**
 See the Database Migration Steps section below for detailed instructions.
-```npx prisma migrate dev --name init
+```
+    npx prisma migrate dev --name init
     npx prisma generate
 ```
 **4. Start the development server**
-```npm run dev
+```
+npm run dev
 ```
 The server should now be running on http://localhost:3000.
 
@@ -59,38 +63,47 @@ The server should now be running on http://localhost:3000.
 We use Prisma to manage our database schema. Whenever you clone the project or update the schema.prisma file, follow these steps:
 
 **1.Push schema to the database (Development):**
-```npx prisma migrate dev --name describe_your_changes
+```
+npx prisma migrate dev --name describe_your_changes
 ```
 This creates a new migration file and applies it to your Postgres database.
 
 **2.Generate the Prisma Client:**
-```npx prisma generate
+```
+npx prisma generate
 ```
 This updates the auto-generated TypeScript types for your database queries.
 
 **3.Reset the database (Optional / If things break):**
-```npx prisma migrate reset
+```
+npx prisma migrate reset
 ```
 Warning: This will wipe all local data and re-apply migrations.
 
 ## 📡 API Endpoints
 Below is the list of primary REST API endpoints available in the application. All protected routes require a valid Bearer <Token> in the Authorization header.
 
+<ul>
 **Authentication (/api/v1/auth)**
 **Method**           |           **Endpoint**                  |                **Description**                           |        **Protected**
 POST                 |           /signup                       |  Register a new user and create an empty wallet          |           No
 POST                 |           /signin                       |  Authenticate user and return JWT                        |           No
+</ul>
 
+<ul>
 **User & Wallet (/api/v1/user)**
 **Method**           |           **Endpoint**                  |                **Description**                           |        **Protected**
 GET                  |           /profile                      |       Get logged-in user's details                       |           Yes
 GET                  |           /balance                      |      Retrieve current wallet balance                     |           Yes
 GET                  |           /bulk                         |   Search users to send money to (with filtering)         |           Yes
+</ul>
 
+<ul>
 **Transactions (/api/v1/account)**
 **Method**           |           **Endpoint**                  |                **Description**                                       |        **Protected**
 POST                 |           /transfer                     | Send money to another user (Requires { to: "userId", amount: 100 })  |           Yes
 GET                  |           /history                      |          Retrieve current wallet balance                             |           Yes
+</ul>
 
 
 ## 🛡️ Security & Scalability Highlights
