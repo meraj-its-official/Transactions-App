@@ -35,12 +35,12 @@ export const SendMoney = ({ isOpen, onClose, }) => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.post("http://localhost:3000/api/v1/account/transfer", {
+            const response = await axios.post("https://paytm-backend.merajalam36930-cloudflare.workers.dev/api/v1/account/transfer", {
                 to: id,
                 amount: Number(amount.amount)
             }, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`
                 },
             }
             );

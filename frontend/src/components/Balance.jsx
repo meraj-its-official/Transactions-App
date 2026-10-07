@@ -9,9 +9,9 @@ export const Balance = () => {
         const fetchBalance = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get("http://localhost:3000/api/v1/account/balance", {
+                const response = await axios.get("https://paytm-backend.merajalam36930-cloudflare.workers.dev/api/v1/account/balance", {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: "Bearer " + localStorage.getItem("token")
                     }
                 });
                 setBalance(response.data.balance);

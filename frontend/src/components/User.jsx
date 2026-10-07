@@ -9,7 +9,7 @@ import { useSearchParams } from "react-router-dom";
 export const Users = () => {
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState("");
-    const debouncedFilter = useDebounce(filter, 500);
+    const debouncedFilter = useDebounce(filter, 100);
 
     // 1. SearchParams aur uska setter lein
     const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +20,12 @@ export const Users = () => {
     useEffect(() => {
         (async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/v1/user/bulk?filter=${debouncedFilter}`);
+                const token = localStorage.getItem("token");
+                const response = await axios.get(`https://paytm-backend.merajalam36930-cloudflare.workers.dev/api/v1/user/bulk?filter=${debouncedFilter}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 setUsers(response.data.user);
             } catch (err) {
                 console.error("Error fetching users:", err);

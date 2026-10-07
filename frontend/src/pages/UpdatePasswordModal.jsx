@@ -46,7 +46,7 @@ export const UpdatePasswordModal = ({ isOpen, onClose }) => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.put(
-                "http://localhost:3000/api/v1/user/update-password",
+                "https://paytm-backend.merajalam36930-cloudflare.workers.dev/api/v1/user/update-password",
                 formData,
                 {
                     headers: {

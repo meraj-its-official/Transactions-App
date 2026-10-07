@@ -32,7 +32,7 @@ export const ForgetPassword = () => {
 
         try {
             // Backend ko request bhejo
-            const response = await axios.put('http://localhost:3000/api/v1/user/forget-password', { ...formData })
+            const response = await axios.put('https://paytm-backend.merajalam36930-cloudflare.workers.dev/api/v1/user/forget-password', { ...formData })
 
             // ✅ Agar forgetPassword success ho gaya toh mast Pop-up dikhao
             toast.success(response.data.message || "Password Created Successfully!")
