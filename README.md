@@ -3,10 +3,10 @@
 A robust, production-ready digital wallet and peer-to-peer (P2P) transaction platform built with Node.js. This application allows users to securely sign up, manage their wallet balances, and transfer funds to other users in real-time with strict ACID compliance to prevent double-spending.
 
 ## 🚀 Tech Stack
-- **Backend:** Node.js, Express.js (or Next.js API Routes)
+- **Backend:** Node.js, Hono.js (or Next.js API Routes)
 - **Database:** PostgreSQL
 - **ORM:** Prisma
-- **Authentication:** JSON Web Tokens (JWT) & bcrypt
+- **Authentication:** Hono Web Tokens (JWT) & bcrypt
 - **Architecture:** Monorepo (Turborepo) / Standard MVC
 
 ---
