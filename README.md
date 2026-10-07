@@ -6,7 +6,7 @@ A robust, production-ready digital wallet and peer-to-peer (P2P) transaction pla
 - **Backend:** Node.js, Hono.js (or Next.js API Routes)
 - **Database:** PostgreSQL
 - **ORM:** Prisma
-- **Authentication:** Hono Web Tokens (JWT) & bcrypt
+- **Authentication:** Json Web Tokens (JWT) & bcrypt
 - **Architecture:** Monorepo (Turborepo) / Standard MVC
 
 ---
