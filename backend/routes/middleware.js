@@ -1,26 +1,35 @@
-const jwt = require("jsonwebtoken");
+// Hono/jwt se verify import hona zaroori hai
+import { verify } from 'hono/jwt';
 
-const authMiddleware = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+export const authMiddleware = async (c, next) => {
+    // 🛠 BUG 1 FIX: Hono mein headers nikalne ka tarika c.req.header() hai
+    const authHeader = c.req.header("authorization");
 
-    // Space ke sath split check karein
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(403).json({ message: "Invalid or missing token" });
+        return c.json({ message: "Invalid or missing token" }, 403);
     }
 
-    const token = authHeader.split(" ")[1]; // Note: space (' ') inside split
+    const token = authHeader.split(" ")[1];
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = await verify(token, c.env.JWT_SECRET, "HS256");
+
         if (decoded && decoded.userId) {
-            req.userId = decoded.userId;
-            next();
+            // 🛠 BUG 2 FIX: Hono mein data pass karne ke liye c.set() use hota hai
+            c.set("userId", decoded.userId);
+
+            // 🛠 BUG 3 FIX: Middleware mein next() hamesha await ke sath call hota hai
+            await next();
         } else {
-            return res.status(403).json({ message: "Unauthorized access" });
+            return c.json({ message: "Unauthorized access" }, 403);
         }
     } catch (error) {
-        return res.status(403).json({ message: "Invalid token" });
+        return c.json({
+            message: "Invalid token",
+            error_reason: error.message,
+            received_token: token // Debugging ke liye check karein ki token kaisa aa raha hai
+        }, 403);
     }
 };
 
-module.exports = authMiddleware
+export default authMiddleware;

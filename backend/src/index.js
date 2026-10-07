@@ -1,43 +1,41 @@
-import { MongoClient } from 'mongodb';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { connectDB } from './db.js';
+import mainRouter from '../routes/index.js';
 
-// Connection ko cache karne ke liye global variable banayein
-let cachedClient = null;
+const app = new Hono();
 
-export default {
-	async fetch(request, env, ctx) {
-		// Ye locally .dev.vars se aayega, aur live hone pe Cloudflare secrets se
-		const dbUrl = env.MONGO_URI;
+// 1. CORS Setup (Manual headers ki jagah Hono ka in-built middleware)
+app.use('/*', cors({
+    origin: '*',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+}));
 
-		try {
-			// Agar client abhi tak connect nahi hua hai, tabhi naya connection banayein
-			if (!cachedClient) {
-				cachedClient = new MongoClient(dbUrl);
-				await cachedClient.connect();
-			}
+// 2. Database Connection Middleware (Har request se pehle chalega)
+app.use('*', async (c, next) => {
+    try {
+        // Hono mein env variables 'c.env' ke andar milte hain
+        await connectDB(c.env);
+        await next(); // Agle route par bhejne ke liye
+    } catch (error) {
+        return c.json({ error: "Database Connection Error" }, 500);
+    }
+});
 
-			// Apna database aur collection select karein 
-			// (Inhe apne actual database aur collection ke naam se replace karein)
-			const db = cachedClient.db('PayTM');
-			const collection = db.collection('users');
+// 3. Routing (Express wale app.use('/api/v1', mainRouter) ka exact replacement)
+app.route('/api/v1', mainRouter);
 
-			// Example: Collection se data fetch karna
-			const data = await collection.find({}).limit(10).toArray();
+// 4. Fallback (404 Not Found)
+app.notFound((c) => {
+    return c.json({ error: "Route not found" }, 404);
+});
 
-			// Data ko JSON format mein return karein
-			return new Response(JSON.stringify(data), {
-				status: 200,
-				headers: {
-					'Content-Type': 'application/json',
-					'Access-Control-Allow-Origin': '*' // Frontend se connect karne ke liye CORS allow karein
-				},
-			});
+// 5. Global Error Handler (500 Server Error)
+app.onError((err, c) => {
+    console.error(err);
+    return c.json({ error: "Server Error" }, 500);
+});
 
-		} catch (error) {
-			// Agar DB connect karne mein koi error aaye toh usko catch karein
-			return new Response(JSON.stringify({ error: error.message }), {
-				status: 500,
-				headers: { 'Content-Type': 'application/json' },
-			});
-		}
-	}
-}
+// Cloudflare Workers ke liye Hono app ko directly export karna hota hai
+export default app;

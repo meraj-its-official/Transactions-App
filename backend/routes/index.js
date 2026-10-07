@@ -1,9 +1,10 @@
-const express = require('express')
-const router = express.Router()
-const userRouter = require('./user')
-const accountRouter = require('./account')
+import { Hono } from "hono";
+const router = new Hono()
+import userRouter from './user'
+import accountRouter from './account'
 
-router.use('/user', userRouter);
-router.use('/account', accountRouter)
 
-module.exports = router
+router.route('/user', userRouter);
+router.route('/account', accountRouter)
+
+export default router
