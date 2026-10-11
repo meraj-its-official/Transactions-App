@@ -74,10 +74,12 @@ export const ForgetPassword = () => {
                             <Button label={"Create New Password"} />
                         </div>
                     </form>
-                    <div className='flex justify-center w-full px-5 py-2.5 me-2 mb-2 text-2xl font-light border-solid border-gray-500 border-b-gray-500 ' >
-                        <p>  ________OR_________ </p>
+                    <div className='flex items-center mt-1 pt-1 pb-1 mb-1 gap-3 my-10' >
+                        <div className="h-px flex-1 ml-5 bg-slate-400"></div>
+                        <span className='text-lg font-light text-slate-700'> OR</span>
+                        <div className="h-px flex-1 mr-5 bg-slate-400"></div>
                     </div>
-                    <div className='pt-4'>
+                    <div className='pt-1'>
                         <ButtonNew label={"Create New Account"} to={'/signup'} />
                     </div>
                 </div>
